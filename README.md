@@ -235,70 +235,6 @@ export class AppComponent {
 
 ---
 
-## ⚠️ Desafíos y Soluciones
-
-### Desafío 1: Versiones de Dependencias
-**Problema:** Conflictos de versión entre Shell y MFE
-
-**Solución:**
-```javascript
-shared: {
-  ...shareAll({ 
-    singleton: true, 
-    strictVersion: true  // ✅ Valida versiones compatibles
-  })
-}
-```
-
-### Desafío 2: Inicialización del Store
-**Problema:** `Property 'store' is used before its initialization`
-
-**Solución:**
-```typescript
-// ❌ Antes (constructor injection)
-constructor(private store: Store) {}
-
-// ✅ Después (inject function)
-private store = inject(Store);
-```
-
-### Desafío 3: Template Syntax en Angular 19
-**Problema:** Operador `||` no permitido en templates
-
-**Solución:**
-```html
-<!-- ❌ Antes -->
-{{ userName$ | async || 'No establecido' }}
-
-<!-- ✅ Después -->
-{{ (userName$ | async) ?? 'No establecido' }}
-```
-
-### Desafío 4: SSR con Native Federation en Desarrollo
-**Problema:** ENOENT al buscar `federation.manifest.json` en rutas incorrectas
-
-**Solución:**
-```json
-// angular.json - configuración de desarrollo
-{
-  "outputMode": "static"  // ✅ Deshabilita SSR en dev
-}
-```
-
-### Desafío 5: Nombre de Archivo en federation.config.js
-**Problema:** `Could not resolve "./src/app/AppComponent.ts"`
-
-**Solución:**
-```javascript
-// ❌ Antes
-'./Component': './src/app/AppComponent.ts'
-
-// ✅ Después
-'./Component': './src/app/app.component.ts'  // Case-sensitive
-```
-
----
-
 ## 🔐 Consideraciones de Seguridad
 
 1. **Estado Sensible**
@@ -408,28 +344,6 @@ private store = inject(Store);
 
 ---
 
-## 🚀 Próximos Pasos
-
-### Corto Plazo
-1. [ ] Implementar autenticación compartida (AuthState)
-2. [ ] Agregar NgRx Effects para llamadas API
-3. [ ] Configurar persistencia del estado (localStorage/sessionStorage)
-4. [ ] Implementar lazy loading de reducers
-
-### Mediano Plazo
-5. [ ] Implementar feature stores para cada MFE
-6. [ ] Agregar NgRx Entity para manejo de colecciones
-7. [ ] Configurar NgRx Router Store para sincronizar routing
-8. [ ] Implementar interceptors para logging centralizado
-
-### Largo Plazo
-9. [ ] Agregar tests e2e con Cypress/Playwright
-10. [ ] Documentar contrato de estado compartido (API de acciones)
-11. [ ] Implementar versionado de estado para migraciones
-12. [ ] Crear biblioteca compartida de acciones y reducers comunes
-
----
-
 ## 📚 Stack Tecnológico
 
 | Tecnología | Versión | Propósito |
@@ -452,7 +366,7 @@ private store = inject(Store);
 
 ---
 
-**Autor:** GitHub Copilot (Claude Sonnet 4.5)  
+**Autor:** Robinson Betancur Marin - Desarrollador FrontEnd 
 **Fecha:** 16 de diciembre de 2025  
 **Proyecto:** POC BookToFly - Arquitectura de Microfrontends  
 **Estado:** ✅ Completado y Validado
