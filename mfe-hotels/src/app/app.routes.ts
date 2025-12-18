@@ -8,7 +8,7 @@ export const routes: Routes = [
     component: HotelsComponent
   },
   {
-    path: 'detail/:id',
+    path: ':id',
     component: HotelDetailComponent
   }
 ];

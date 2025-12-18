@@ -19,8 +19,8 @@ export class HomeComponent {
 
   setUser() {
     this.store.dispatch(setUser({ 
-      name: 'Juan Pérez', 
-      email: 'juan@example.com' 
+      name: 'Robinson Betancur', 
+      email: 'robinson.betancur@example.com' 
     }));
   }
 

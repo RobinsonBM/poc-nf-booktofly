@@ -10,10 +10,10 @@ export const routes: Routes = [
   },
   {
     path: 'hotels',
-    loadComponent: () =>
+    loadChildren: () =>
       loadRemoteModule({
         remoteName: 'mfe-hotels',
-        exposedModule: './Component'
-      }).then((m) => m.AppComponent)
+        exposedModule: './routes'
+      }).then((m) => m.routes)
   }
 ];
