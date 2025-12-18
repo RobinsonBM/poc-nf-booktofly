@@ -1,54 +1,112 @@
-# MfeHotels
+# MFE Hotels - Microfrontend de Hoteles
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.19.
+Microfrontend de hoteles construido con Angular 19 y Native Federation. Muestra un catálogo de hoteles colombianos con navegación a vista de detalle.
 
-## Development server
+## 🏨 Características
 
-To start a local development server, run:
+- **Catálogo de Hoteles**: Grid responsivo con 6 hoteles colombianos
+- **Vista de Detalle**: Información completa de cada hotel con amenities
+- **Estado Compartido**: Integración con NgRx Store del shell para mostrar usuario
+- **Navegación**: Sistema de rutas integrado con el shell
+- **Precios en COP**: Formato de moneda colombiana con separadores de miles
+- **Diseño Moderno**: Paleta de colores navy/blue profesional
 
-```bash
-ng serve
-```
+## 🚀 Desarrollo
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Para iniciar el servidor de desarrollo:
 
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+El MFE estará disponible en `http://localhost:4201/`.
 
-To build the project run:
+## 📁 Estructura del Proyecto
+
+```
+mfe-hotels/
+├── src/app/
+│   ├── hotels/                    # Componente lista de hoteles
+│   │   ├── hotels.component.ts    # 6 hoteles colombianos, Store integration
+│   │   ├── hotels.component.html  # Grid con banner y navegación
+│   │   └── hotels.component.less  # Efectos hover
+│   ├── hotel-detail/              # Componente detalle de hotel
+│   │   ├── hotel-detail.component.ts    # Lógica de detalle, datos extendidos
+│   │   ├── hotel-detail.component.html  # Vista completa con amenities
+│   │   └── hotel-detail.component.less
+│   ├── app.routes.ts              # Rutas: '' y ':id'
+│   └── app.component.ts           # Root component con router-outlet
+├── federation.config.js           # Expone './routes'
+└── package.json
+```
+
+## 🛣️ Rutas
+
+El MFE expone las siguientes rutas mediante Native Federation:
+
+- `''` → **HotelsComponent**: Lista de hoteles
+- `:id` → **HotelDetailComponent**: Detalle del hotel
+
+Cuando se integra en el shell bajo `/hotels`:
+- `/hotels` → Lista de hoteles
+- `/hotels/1` → Detalle del hotel 1
+
+## 🏨 Hoteles Incluidos
+
+1. **Hotel Casa San Agustín** - Cartagena ($580.000 COP)
+2. **Four Seasons Casa Medina** - Bogotá ($720.000 COP)
+3. **Hotel Estelar Miraflores** - Medellín ($450.000 COP)
+4. **GHL Hotel Neiva** - Neiva ($280.000 COP)
+5. **Dann Carlton Cali** - Cali ($350.000 COP)
+6. **Hotel Charleston Santa Teresa** - Cartagena ($890.000 COP)
+
+## 🔧 Configuración de Federation
+
+```javascript
+// federation.config.js
+exposes: {
+  './routes': './src/app/app.routes.ts'
+}
+```
+
+El shell carga las rutas usando `loadChildren`:
+
+```typescript
+{
+  path: 'hotels',
+  loadChildren: () => loadRemoteModule({
+    remoteName: 'mfe-hotels',
+    exposedModule: './routes'
+  }).then(m => m.routes)
+}
+```
+
+## 🎨 Paleta de Colores
+
+- Navy: `#2c3e50`, `#34495e`
+- Blue: `#3498db`, `#2980b9`
+- Grays: `#f8f9fa`, `#6c757d`, `#e9ecef`
+
+## 📦 Construcción
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## 🧪 Tests
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## 📚 Más Información
 
-For end-to-end (e2e) testing, run:
+Este MFE forma parte de una arquitectura de microfrontends usando:
+- **Angular 19.2.0**
+- **Native Federation 19.0.23**
+- **NgRx Store 19.2.1** (shared singleton con el shell)
+- **Standalone Components**
 
-```bash
 ng e2e
 ```
 

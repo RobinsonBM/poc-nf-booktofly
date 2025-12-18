@@ -1,51 +1,43 @@
-# Reporte Técnico: Prueba de Estado Compartido con NgRx en Arquitectura de Microfrontends
+# BookToFly - Arquitectura de Microfrontends con Native Federation
 
-## 📋 Resumen Ejecutivo
+Prueba de concepto de arquitectura de microfrontends usando Angular 19, Native Federation y NgRx Store compartido.
 
-Se implementó y validó exitosamente la compartición de estado entre un Shell (aplicación host) y un Microfrontend remoto utilizando NgRx Store y Native Federation v19, demostrando la capacidad de mantener un estado global consistente en una arquitectura distribuida de microfrontends.
+## 📋 Resumen
+
+Implementación de una aplicación de reservas de viajes usando arquitectura de microfrontends, demostrando:
+- Compartición de estado global con NgRx Store (singleton)
+- Carga dinámica de rutas desde microfrontends remotos
+- Navegación integrada entre shell y MFEs
+- Componentes standalone de Angular 19
 
 ---
 
-## 🎯 Objetivo
-
-Validar la capacidad de compartir estado de aplicación entre el Shell y los Microfrontends utilizando NgRx Store como gestor de estado centralizado, garantizando que ambas aplicaciones accedan a la misma instancia del store mediante la configuración singleton de Native Federation.
-
----
-
-## 🏗️ Arquitectura Implementada
-
-### Componentes de la Arquitectura
+## 🏗️ Arquitectura
 
 ```
 ┌─────────────────────────────────────────┐
-│         Shell (booktofly-shell)         │
-│         Puerto: 4200                     │
+│    Shell (booktofly-shell:4200)         │
 │  ┌────────────────────────────────────┐ │
-│  │      NgRx Store (Singleton)        │ │
-│  │  - User State                      │ │
-│  │  - Actions: setUser, clearUser     │ │
-│  │  - Selectors: selectUserName/Email │ │
+│  │   NgRx Store (Singleton)           │ │
+│  │   - User State Management          │ │
 │  └────────────────────────────────────┘ │
-│                    ▲                     │
-│                    │ Shared Instance     │
-│  ┌─────────────────┼──────────────────┐ │
-│  │  HomeComponent  │  Native          │ │
-│  │  - Write Store  │  Federation      │ │
-│  │  - Navigate     │  Runtime         │ │
-│  └─────────────────┴──────────────────┘ │
-└─────────────────────────────────────────┘
-                     │
-                     │ Remote Load
-                     ▼
-┌─────────────────────────────────────────┐
-│       MFE Hotels (mfe-hotels)           │
-│         Puerto: 4201                     │
 │  ┌────────────────────────────────────┐ │
-│  │   AppComponent (Remote)            │ │
-│  │   - Read Store (Same Instance)     │ │
-│  │   - Display User Data              │ │
+│  │   HomeComponent                    │ │
+│  │   - Establece usuario en Store     │ │
+│  │   - Navegación a MFEs              │ │
 │  └────────────────────────────────────┘ │
 └─────────────────────────────────────────┘
+                    │
+         ┌──────────┴──────────┐
+         ▼                     ▼
+┌──────────────────┐  ┌──────────────────┐
+│  MFE Hotels      │  │  Future MFEs     │
+│  (Port: 4201)    │  │  (Flights, etc.) │
+│                  │  │                  │
+│  Rutas:          │  └──────────────────┘
+│  - /hotels       │
+│  - /hotels/:id   │
+└──────────────────┘
 ```
 
 ---
@@ -56,57 +48,269 @@ Validar la capacidad de compartir estado de aplicación entre el Shell y los Mic
 
 **Archivo: federation.config.js (ambos proyectos)**
 
+## 🚀 Inicio Rápido
+
+### Prerrequisitos
+- Node.js 18+
+- Angular CLI 19+
+- npm o yarn
+
+### Instalación y Ejecución
+
+1. **Instalar dependencias en ambos proyectos:**
+```bash
+cd booktofly-shell && npm install
+cd ../mfe-hotels && npm install
+```
+
+2. **Iniciar MFE (primero):**
+```bash
+cd mfe-hotels
+npm start
+# Corre en http://localhost:4201
+```
+
+3. **Iniciar Shell (después):**
+```bash
+cd booktofly-shell
+npm start
+# Corre en http://localhost:4200
+```
+
+4. **Abrir en navegador:**
+```
+http://localhost:4200
+```
+
+---
+
+## 🏨 MFE Hotels - Funcionalidades
+
+### Catálogo de Hoteles
+- Grid responsivo con 6 hoteles colombianos
+- Precios en Pesos Colombianos (COP)
+- Ratings y ubicaciones
+- Navegación a vista de detalle
+
+### Hoteles Incluidos
+1. Hotel Casa San Agustín - Cartagena ($580.000)
+2. Four Seasons Casa Medina - Bogotá ($720.000)
+3. Hotel Estelar Miraflores - Medellín ($450.000)
+4. GHL Hotel Neiva - Neiva ($280.000)
+5. Dann Carlton Cali - Cali ($350.000)
+6. Hotel Charleston Santa Teresa - Cartagena ($890.000)
+
+### Vista de Detalle
+- Imagen hero del hotel
+- Información completa (precio, rating, ubicación)
+- Descripción detallada
+- Grid de amenities/servicios
+- Botón de reserva
+
+---
+
+## 🔧 Configuración Técnica
+
+### 1. Native Federation - Singleton Configuration
+
+**Configuración en ambos proyectos (`federation.config.js`):**
+
 ```javascript
 shared: {
   ...shareAll({ 
-    singleton: true,        // ✅ Clave: Una sola instancia
+    singleton: true,        // ✅ Una sola instancia compartida
     strictVersion: true,    // ✅ Validación de versiones
     requiredVersion: 'auto' // ✅ Detección automática
   }),
 }
 ```
 
-**Configuración clave:**
-- `singleton: true` → Garantiza una única instancia de NgRx Store compartida
-- `strictVersion: true` → Previene conflictos de versiones entre Shell y MFE
-- `shareAll()` → Comparte todas las dependencias de `package.json` automáticamente
+### 2. Exposición de Rutas (MFE)
 
-### 2. NgRx Store Configuration
+```javascript
+// mfe-hotels/federation.config.js
+exposes: {
+  './routes': './src/app/app.routes.ts'
+}
+```
 
-**Shell - State Management**
+### 3. Carga de Rutas (Shell)
 
 ```typescript
-// booktofly-shell/src/app/store/user.actions.ts
-export const setUser = createAction(
-  '[User] Set User',
+// booktofly-shell/src/app/app.routes.ts
+{
+  path: 'hotels',
+  loadChildren: () =>
+    loadRemoteModule({
+      remoteName: 'mfe-hotels',
+      exposedModule: './routes'
+    }).then(m => m.routes)
+}
+```
+
+### 4. NgRx Store - Estado Compartido
+
+**Actions (Shell):**
+```typescript
+export const setUser = createAction('[User] Set User', 
   props<{ name: string; email: string }>()
 );
+```
 
-export const clearUser = createAction('[User] Clear User');
-
-// booktofly-shell/src/app/store/user.reducer.ts
+**Reducer (Shell):**
+```typescript
 export const userReducer = createReducer(
   initialState,
-  on(setUser, (state, { name, email }) => ({ ...state, name, email })),
-  on(clearUser, () => initialState)
+  on(setUser, (state, { name, email }) => ({ ...state, name, email }))
 );
-
-// booktofly-shell/src/app/store/user.selectors.ts
-export const selectUserName = (state: AppState) => state.user.name;
-export const selectUserEmail = (state: AppState) => state.user.email;
 ```
 
-**Providers Configuration (ambos proyectos):**
-
+**Selectors (compartidos):**
 ```typescript
-// app.config.ts
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideRouter(routes),
-    provideStore({ user: userReducer }) // ✅ Mismo reducer en ambos
-  ]
-};
+export const selectUser = (state: AppState) => state.user.name;
 ```
+
+**Uso en MFE:**
+```typescript
+// HotelsComponent lee del mismo store
+user$ = this.store.select(selectUser);
+```
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+poc-booktofly/
+├── booktofly-shell/          # Shell (Host) - Puerto 4200
+│   ├── src/app/
+│   │   ├── home/             # Componente principal
+│   │   ├── store/            # NgRx Store (User state)
+│   │   │   ├── user.actions.ts
+│   │   │   ├── user.reducer.ts
+│   │   │   └── user.selectors.ts
+│   │   ├── app.routes.ts     # Rutas del shell + carga de MFEs
+│   │   └── app.config.ts     # Configuración con provideStore
+│   ├── federation.config.js  # Config de Native Federation
+│   └── package.json
+│
+├── mfe-hotels/               # MFE Hoteles - Puerto 4201
+│   ├── src/app/
+│   │   ├── hotels/           # Lista de hoteles
+│   │   │   ├── hotels.component.ts
+│   │   │   ├── hotels.component.html
+│   │   │   └── hotels.component.less
+│   │   ├── hotel-detail/     # Detalle de hotel
+│   │   │   ├── hotel-detail.component.ts
+│   │   │   ├── hotel-detail.component.html
+│   │   │   └── hotel-detail.component.less
+│   │   ├── app.routes.ts     # Rutas: '' y ':id'
+│   │   └── app.component.ts
+│   ├── federation.config.js  # Expone './routes'
+│   └── package.json
+│
+└── README.md                 # Este archivo
+```
+
+---
+
+## 🛣️ Flujo de Navegación
+
+1. **Home (Shell)** → Usuario establece nombre
+2. **Click "Ir a Hotels"** → Navega a `/hotels`
+3. **Shell carga MFE** → `loadChildren` carga rutas remotas
+4. **Lista de Hoteles** → Muestra 6 hoteles, banner con usuario del Store
+5. **Click en Hotel** → Navega a `/hotels/:id`
+6. **Vista Detalle** → Muestra información completa
+7. **Click "Volver"** → Regresa a `/hotels`
+8. **Click "Volver al Home"** → Regresa a `/`
+
+---
+
+## 🎨 Diseño y Estilos
+
+### Paleta de Colores
+- **Navy**: `#2c3e50`, `#34495e` (Headers, texto principal)
+- **Blue**: `#3498db`, `#2980b9` (Botones, accents)
+- **Grays**: `#f8f9fa`, `#6c757d`, `#e9ecef` (Backgrounds, borders)
+
+### Componentes UI
+- Grid responsivo con `auto-fill` y `minmax(300px, 1fr)`
+- Cards con shadow y efectos hover (`translateY(-8px)`)
+- Gradientes en banners (`linear-gradient(135deg, ...)`)
+- Border radius moderno (8px, 12px)
+
+---
+
+## ✅ Validaciones Exitosas
+
+### Estado Compartido
+- ✅ Store singleton funciona correctamente
+- ✅ Usuario establecido en Shell visible en MFE
+- ✅ Misma instancia de Store en ambas aplicaciones
+
+### Navegación
+- ✅ Rutas cargadas dinámicamente con `loadChildren`
+- ✅ Navegación entre lista y detalle funciona
+- ✅ Rutas relativas y absolutas funcionan correctamente
+- ✅ Botones de volver navegan correctamente
+
+### Integración
+- ✅ MFE se carga sin errores
+- ✅ Manifest de federation se genera correctamente
+- ✅ Hot reload funciona en ambos proyectos
+
+---
+
+## 🛠️ Stack Tecnológico
+
+- **Angular**: 19.2.0
+- **Native Federation**: 19.0.23 (@angular-architects/native-federation)
+- **NgRx Store**: 19.2.1 (@ngrx/store)
+- **TypeScript**: ~5.7.0
+- **Node**: 18+
+
+---
+
+## 📚 Lecciones Aprendidas
+
+### ✅ Mejores Prácticas
+1. **Singleton en Federation**: Esencial para compartir estado
+2. **Rutas Planas en MFE**: Simplifica navegación (`:id` vs `detail/:id`)
+3. **loadChildren vs loadComponent**: `loadChildren` para rutas, `loadComponent` para componentes únicos
+4. **Rutas Absolutas para Portabilidad**: `/hotels` es más claro que rutas relativas complejas
+5. **MFE Debe Iniciar Primero**: El shell necesita el manifest del MFE
+
+### ⚠️ Errores Comunes Evitados
+- No usar `singleton: true` → Múltiples instancias de Store
+- Usar rutas anidadas complejas → Problemas con `loadChildren`
+- No reiniciar MFE después de cambiar `federation.config.js`
+- Usar rutas relativas excesivas (`../../`) → Confusión
+
+---
+
+## 🔮 Próximos Pasos
+
+- [ ] Agregar más MFEs (Flights, Packages, etc.)
+- [ ] Implementar autenticación compartida
+- [ ] Agregar lazy loading de imágenes
+- [ ] Implementar filtros y búsqueda en hoteles
+- [ ] Agregar proceso de reserva completo
+- [ ] Tests E2E de integración entre Shell y MFEs
+- [ ] Implementar error boundaries
+- [ ] Agregar loading states
+
+---
+
+## 📄 Licencia
+
+Este es un proyecto de prueba de concepto para demostración de arquitectura de microfrontends.
+
+---
+
+## 👥 Autor
+
+Desarrollado por Robinson Betancur Marin como Desarrollador FrontEnd.
 
 ### 3. Component Implementation
 

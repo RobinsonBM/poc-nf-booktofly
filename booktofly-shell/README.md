@@ -1,59 +1,146 @@
-# BooktoflyShell
+# BookToFly Shell - Host Application
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.19.
+Shell application (host) para la arquitectura de microfrontends de BookToFly. Gestiona el estado global con NgRx Store y carga dinámicamente los microfrontends remotos.
 
-## Development server
+## 🎯 Propósito
 
-To start a local development server, run:
+El Shell actúa como aplicación host que:
+- Gestiona el estado global de la aplicación (usuario)
+- Carga microfrontends remotos dinámicamente
+- Proporciona navegación unificada
+- Comparte el estado mediante NgRx Store singleton
 
-```bash
-ng serve
-```
+## 🚀 Desarrollo
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Para iniciar el servidor de desarrollo:
 
 ```bash
-ng generate component component-name
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+La aplicación estará disponible en `http://localhost:4200/`.
 
-```bash
-ng generate --help
+**Importante**: Los MFEs deben estar ejecutándose antes de iniciar el shell.
+
+## 📁 Estructura del Proyecto
+
+```
+booktofly-shell/
+├── src/app/
+│   ├── home/                     # Componente home
+│   │   ├── home.component.ts     # Establece usuario en Store
+│   │   └── home.component.html   # Formulario y navegación a MFEs
+│   ├── store/                    # NgRx Store
+│   │   ├── user.actions.ts       # Actions: setUser, clearUser
+│   │   ├── user.reducer.ts       # Reducer del estado user
+│   │   └── user.selectors.ts     # Selectors: selectUser
+│   ├── app.routes.ts             # Rutas: home + loadChildren para MFEs
+│   ├── app.config.ts             # Providers con provideStore
+│   └── app.component.ts          # Root component
+├── federation.config.js          # Config de Native Federation
+└── package.json
 ```
 
-## Building
+## 🛣️ Configuración de Rutas
 
-To build the project run:
+```typescript
+export const routes: Routes = [
+  {
+    path: '',
+    component: HomeComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'hotels',
+    loadChildren: () =>
+      loadRemoteModule({
+        remoteName: 'mfe-hotels',
+        exposedModule: './routes'
+      }).then(m => m.routes)
+  }
+];
+```
+
+## 🔧 NgRx Store - Estado Global
+
+### Estado del Usuario
+
+```typescript
+interface UserState {
+  name: string;
+  email: string;
+}
+```
+
+### Actions
+
+```typescript
+// Establecer usuario
+store.dispatch(setUser({ name: 'Juan', email: 'juan@example.com' }));
+
+// Limpiar usuario
+store.dispatch(clearUser());
+```
+
+### Selectors
+
+```typescript
+// En componentes
+userName$ = this.store.select(selectUser);
+userEmail$ = this.store.select((state: any) => state.user?.email);
+```
+
+## 🔗 Integración con MFEs
+
+### Federation Config
+
+```javascript
+// federation.config.js
+shared: {
+  ...shareAll({ 
+    singleton: true,        // ✅ Store compartido
+    strictVersion: true,
+    requiredVersion: 'auto'
+  })
+}
+```
+
+### Remotes
+
+```javascript
+remotes: {
+  'mfe-hotels': 'http://localhost:4201/remoteEntry.json'
+}
+```
+
+## 🏠 HomeComponent
+
+Componente principal del shell que:
+- Permite establecer el nombre de usuario
+- Muestra el usuario actual desde el Store
+- Proporciona navegación a los MFEs (Hotels, etc.)
+- Persiste el usuario en el estado global
+
+## 📦 Construcción
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## 🧪 Tests
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## 🔑 Dependencias Clave
 
-For end-to-end (e2e) testing, run:
+- **Angular**: 19.2.0
+- **Native Federation**: 19.0.23
+- **NgRx Store**: 19.2.1
+- **TypeScript**: ~5.7.0
 
-```bash
-ng e2e
-```
+## 📚 Más Información
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Este shell forma parte de la arquitectura de microfrontends de BookToFly. Ver el [README principal](../README.md) para más detalles sobre la arquitectura completa.
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
