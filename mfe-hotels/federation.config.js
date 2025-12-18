@@ -5,7 +5,7 @@ module.exports = withNativeFederation({
   name: 'mfe-hotels',
 
   exposes: {
-    './Component': './src/app/app.component.ts',
+    './routes': './src/app/app.routes.ts',
   },
 
   shared: {

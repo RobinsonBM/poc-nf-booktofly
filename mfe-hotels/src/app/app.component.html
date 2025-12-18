@@ -1,18 +1,1 @@
-<div style="padding: 20px; background-color: #f0f8ff;">
-  <h1>🏨 Microfrontend Hotels</h1>
-  
-  <div style="border: 2px solid #FF9800; padding: 15px; margin: 20px 0; border-radius: 5px; background: white;">
-    <h2>Lectura del Store del Shell</h2>
-    <p><strong>Usuario desde el Store:</strong></p>
-    <p>Nombre: {{ (userName$ | async) ?? 'No establecido' }}</p>
-    <p>Email: {{ (userEmail$ | async) ?? 'No establecido' }}</p>
-    
-    <div style="margin-top: 15px; padding: 10px; background: #ffffcc; border-radius: 4px;">
-      <p><strong>✅ Si ves los datos del usuario aquí, significa que el MFE está leyendo el store del Shell correctamente!</strong></p>
-    </div>
-  </div>
-
-  <div style="margin-top: 20px;">
-    <p>Este es el contenido del microfrontend de Hotels cargado dinámicamente desde Native Federation.</p>
-  </div>
-</div>
+<router-outlet />

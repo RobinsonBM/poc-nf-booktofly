@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { CommonModule } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.less'
 })
