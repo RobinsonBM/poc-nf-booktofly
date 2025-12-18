@@ -1,3 +1,4 @@
 {
-	"mfe-hotels": "http://localhost:4201/remoteEntry.json"
+	"mfe-hotels": "http://localhost:4201/remoteEntry.json",
+	"mfe-flights": "http://localhost:4202/remoteEntry.json"
 }
