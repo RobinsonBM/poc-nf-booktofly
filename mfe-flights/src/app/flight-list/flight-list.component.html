@@ -1,0 +1,70 @@
+<div class="flight-list-container">
+  <div class="header">
+    <h1>Resultados de Búsqueda</h1>
+    <button class="btn-back" (click)="backToSearch()">← Nueva Búsqueda</button>
+  </div>
+
+  @if (hasResults()) {
+    <div class="results-info">
+      <p>Se encontraron <strong>{{ flights().length }}</strong> vuelo(s)</p>
+    </div>
+
+    <div class="flights-grid">
+      @for (flight of flights(); track flight.id) {
+        <div class="flight-card">
+          <div class="flight-header">
+            <h3>{{ flight.airline }}</h3>
+            <span class="flight-number">{{ flight.flightNumber }}</span>
+          </div>
+
+          <div class="flight-route">
+            <div class="location">
+              <span class="city">{{ flight.origin }}</span>
+              <span class="time">{{ flight.departureTime }}</span>
+            </div>
+
+            <div class="flight-path">
+              <span class="duration">{{ flight.duration }}</span>
+              <div class="arrow">✈️</div>
+            </div>
+
+            <div class="location">
+              <span class="city">{{ flight.destination }}</span>
+              <span class="time">{{ flight.arrivalTime }}</span>
+            </div>
+          </div>
+
+          <div class="flight-info">
+            <div class="info-item">
+              <span class="label">Clase:</span>
+              <span class="value">{{ flight.class }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Asientos disponibles:</span>
+              <span class="value">{{ flight.availableSeats }}</span>
+            </div>
+          </div>
+
+          <div class="flight-footer">
+            <div class="price">
+              <span class="amount">{{ flight.price }}€</span>
+              <span class="per-person">por persona</span>
+            </div>
+            <button class="btn-details" (click)="viewDetails(flight.id)">
+              Ver Detalles
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="no-results">
+      <div class="icon">✈️</div>
+      <h2>No se encontraron vuelos</h2>
+      <p>Intenta modificar los criterios de búsqueda</p>
+      <button class="btn-search-again" (click)="backToSearch()">
+        Buscar de Nuevo
+      </button>
+    </div>
+  }
+</div>

@@ -1,0 +1,84 @@
+<div class="flight-search-container">
+  <h1>Búsqueda de Vuelos</h1>
+  
+  <form (ngSubmit)="onSearch()" class="search-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="origin">Origen</label>
+        <input 
+          type="text" 
+          id="origin" 
+          [value]="searchCriteria().origin"
+          (input)="updateOrigin($any($event.target).value)"
+          placeholder="Ciudad de origen"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="destination">Destino</label>
+        <input 
+          type="text" 
+          id="destination" 
+          [value]="searchCriteria().destination"
+          (input)="updateDestination($any($event.target).value)"
+          placeholder="Ciudad de destino"
+          required
+        />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="departureDate">Fecha de Salida</label>
+        <input 
+          type="date" 
+          id="departureDate" 
+          [value]="searchCriteria().departureDate"
+          (input)="updateDepartureDate($any($event.target).value)"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="passengers">Pasajeros</label>
+        <input 
+          type="number" 
+          id="passengers" 
+          [value]="searchCriteria().passengers"
+          (input)="updatePassengers(+$any($event.target).value)"
+          min="1"
+          max="9"
+          required
+        />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="class">Clase</label>
+        <select 
+          id="class" 
+          [value]="searchCriteria().class"
+          (change)="updateClass($any($event.target).value)"
+        >
+          <option value="economy">Económica</option>
+          <option value="business">Business</option>
+          <option value="first">Primera Clase</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-search">Buscar Vuelos</button>
+  </form>
+
+  <div class="info-section">
+    <h3>🌍 Destinos Populares</h3>
+    <ul>
+      <li>Madrid - Barcelona</li>
+      <li>Barcelona - Madrid</li>
+      <li>Madrid - Valencia</li>
+      <li>Barcelona - Sevilla</li>
+    </ul>
+  </div>
+</div>

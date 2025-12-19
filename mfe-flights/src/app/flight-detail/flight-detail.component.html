@@ -1,0 +1,146 @@
+@if (flight(); as flightData) {
+  <div class="flight-detail-container">
+    <div class="header">
+      <button class="btn-back" (click)="backToList()">← Volver a Resultados</button>
+      <h1>Detalles del Vuelo</h1>
+    </div>
+
+    <div class="detail-card">
+      <div class="flight-main-info">
+        <div class="airline-section">
+          <h2>{{ flightData.airline }}</h2>
+          <span class="flight-number">{{ flightData.flightNumber }}</span>
+        </div>
+
+        <div class="route-section">
+          <div class="departure">
+            <div class="location-label">Origen</div>
+            <div class="location-name">{{ flightData.origin }}</div>
+            <div class="time">{{ flightData.departureTime }}</div>
+          </div>
+
+          <div class="flight-visual">
+            <div class="plane-icon">✈️</div>
+            <div class="flight-line"></div>
+            <div class="duration">{{ flightData.duration }}</div>
+          </div>
+
+          <div class="arrival">
+            <div class="location-label">Destino</div>
+            <div class="location-name">{{ flightData.destination }}</div>
+            <div class="time">{{ flightData.arrivalTime }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flight-details-grid">
+        <div class="detail-item">
+          <div class="detail-icon">🎫</div>
+          <div class="detail-content">
+            <div class="detail-label">Clase</div>
+            <div class="detail-value">{{ flightData.class | uppercase }}</div>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-icon">💺</div>
+          <div class="detail-content">
+            <div class="detail-label">Asientos Disponibles</div>
+            <div class="detail-value">{{ flightData.availableSeats }}</div>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-icon">⏱️</div>
+          <div class="detail-content">
+            <div class="detail-label">Duración</div>
+            <div class="detail-value">{{ flightData.duration }}</div>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-icon">💰</div>
+          <div class="detail-content">
+            <div class="detail-label">Precio Base</div>
+            <div class="detail-value">{{ flightData.price }}€</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-section">
+        <h3>Selecciona el número de asientos</h3>
+        
+        <div class="seat-selector">
+          <button 
+            class="btn-seat" 
+            (click)="decreaseSeats()"
+            [disabled]="selectedSeats() <= 1"
+          >
+            -
+          </button>
+          
+          <div class="seat-count">
+            <span class="number">{{ selectedSeats() }}</span>
+            <span class="label">asiento(s)</span>
+          </div>
+          
+          <button 
+            class="btn-seat" 
+            (click)="increaseSeats()"
+            [disabled]="selectedSeats() >= flightData.availableSeats"
+          >
+            +
+          </button>
+        </div>
+
+        <div class="price-summary">
+          <div class="price-breakdown">
+            <div class="price-line">
+              <span>Precio por asiento:</span>
+              <span>{{ flightData.price }}€</span>
+            </div>
+            <div class="price-line">
+              <span>Número de asientos:</span>
+              <span>{{ selectedSeats() }}</span>
+            </div>
+            <div class="price-line total">
+              <span>Total:</span>
+              <span class="total-amount">{{ totalPrice() }}€</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-book" (click)="bookFlight()">
+          Reservar Ahora
+        </button>
+      </div>
+
+      <div class="amenities-section">
+        <h3>Servicios Incluidos</h3>
+        <div class="amenities-grid">
+          <div class="amenity">
+            <span class="amenity-icon">🎒</span>
+            <span>Equipaje de mano</span>
+          </div>
+          <div class="amenity">
+            <span class="amenity-icon">🥤</span>
+            <span>Bebidas incluidas</span>
+          </div>
+          <div class="amenity">
+            <span class="amenity-icon">📱</span>
+            <span>WiFi disponible</span>
+          </div>
+          <div class="amenity">
+            <span class="amenity-icon">🎬</span>
+            <span>Entretenimiento a bordo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando detalles del vuelo...</p>
+  </div>
+}
