@@ -14,7 +14,11 @@
         <div class="flight-card">
           <div class="flight-header">
             <h3>{{ flight.airline }}</h3>
-            <span class="flight-number">{{ flight.flightNumber }}</span>
+            <div class="header-actions">
+              <span class="flight-number">{{ flight.flightNumber }}</span>
+              <button class="btn-info" (click)="openModal(flight)" title="Info Modal Custom">ℹ️</button>
+              <button class="btn-material" (click)="openMaterialModal(flight)" title="Info Modal Material">📋</button>
+            </div>
           </div>
 
           <div class="flight-route">
@@ -67,4 +71,10 @@
       </button>
     </div>
   }
+
+  <app-flight-modal 
+    [flight]="selectedFlight()" 
+    [isOpen]="isModalOpen()" 
+    (close)="closeModal()">
+  </app-flight-modal>
 </div>

@@ -78,6 +78,12 @@
         font-size: 1.3rem;
       }
 
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
       .flight-number {
         background: #667eea;
         color: white;
@@ -85,6 +91,54 @@
         border-radius: 20px;
         font-size: 0.9rem;
         font-weight: 600;
+      }
+
+      .btn-info {
+        background: #2196F3;
+        color: white;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          background: #1976D2;
+          transform: scale(1.1);
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+
+      .btn-material {
+        background: #667eea;
+        color: white;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          background: #764ba2;
+          transform: scale(1.1);
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
       }
     }
 

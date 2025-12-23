@@ -17,7 +17,6 @@ import { Router } from '@angular/router';
     const elementName = 'mfe-flights-element';
     if (!customElements.get(elementName)) {
       customElements.define(elementName, flightsElement);
-      console.log('✅ Web Component mfe-flights-element registrado');
     }
   } catch (error) {
     console.error('❌ Error:', error);

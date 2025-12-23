@@ -1,8 +1,9 @@
 import { Routes } from '@angular/router';
 import { loadRemoteModule } from '@angular-architects/native-federation';
 import { HomeComponent } from './home/home.component';
-import { FlightsWrapperComponent } from './flights-wrapper/flights-wrapper.component';
 import { startsWith } from './utils/route-matchers';
+import { WrapperComponent } from './wrapper/wrapper.component';
+import { WrapperConfig } from './wrapper/wrapper-config';
 
 export const routes: Routes = [
   {
@@ -10,6 +11,7 @@ export const routes: Routes = [
     component: HomeComponent,
     pathMatch: 'full'
   },
+  // Hotels: Lazy Routes (patrón estándar - maneja sus propias rutas)
   {
     path: 'hotels',
     loadChildren: () =>
@@ -18,15 +20,16 @@ export const routes: Routes = [
         exposedModule: './routes'
       }).then((m) => m.routes)
   },
+  // Flights: Web Component (wrapper genérico)
   {
     matcher: startsWith('flights'),
-    component: FlightsWrapperComponent,
+    component: WrapperComponent,
     data: {
       config: {
         remoteName: 'mfe-flights',
         exposedModule: './web-component',
         elementName: 'mfe-flights-element'
-      }
+      } as WrapperConfig
     }
   }
 ];

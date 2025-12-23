@@ -1,0 +1,61 @@
+@if (isOpen && flight) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="stopPropagation($event)">
+      <div class="modal-header">
+        <h3>Información del Vuelo</h3>
+        <button class="btn-close" (click)="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="info-row">
+          <span class="label">Aerolínea:</span>
+          <span class="value">{{ flight.airline }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Número de vuelo:</span>
+          <span class="value">{{ flight.flightNumber }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Ruta:</span>
+          <span class="value">{{ flight.origin }} → {{ flight.destination }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Duración:</span>
+          <span class="value">{{ flight.duration }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Salida:</span>
+          <span class="value">{{ flight.departureTime }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Llegada:</span>
+          <span class="value">{{ flight.arrivalTime }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Clase:</span>
+          <span class="value">{{ flight.class }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Asientos disponibles:</span>
+          <span class="value">{{ flight.availableSeats }}</span>
+        </div>
+
+        <div class="info-row highlight">
+          <span class="label">Precio:</span>
+          <span class="value">{{ flight.price }}€ por persona</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-close-modal" (click)="closeModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}

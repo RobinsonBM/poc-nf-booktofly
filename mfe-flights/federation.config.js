@@ -8,37 +8,37 @@ module.exports = withNativeFederation({
   },
 
   shared: {
-    ...shareAll({
-      singleton: false,
-      strictVersion: true,
-      requiredVersion: 'auto',
-      includeSecondaries: false,
-    }),
-    '@angular/common/http': {
-      singleton: false,
-      strictVersion: true,
-      requiredVersion: 'auto',
-    },
-    rxjs: {
-      singleton: false,
-      strictVersion: true,
-      requiredVersion: 'auto',
-    },
-    'rxjs/operators': {
-      singleton: false,
-      strictVersion: true,
-      requiredVersion: 'auto',
-    },
-    '@angular/core/primitives/signals': {
-      singleton: false,
-      strictVersion: true,
-      requiredVersion: 'auto',
-    },
-    '@angular/core/primitives/di': {
-      singleton: false,
-      strictVersion: true,
-      requiredVersion: 'auto',
-    },
+    // ...shareAll({
+    //   singleton: false,
+    //   strictVersion: true,
+    //   requiredVersion: 'auto',
+    //   includeSecondaries: false,
+    // }),
+    // '@angular/common/http': {
+    //   singleton: false,
+    //   strictVersion: true,
+    //   requiredVersion: 'auto',
+    // },
+    // rxjs: {
+    //   singleton: false,
+    //   strictVersion: true,
+    //   requiredVersion: 'auto',
+    // },
+    // 'rxjs/operators': {
+    //   singleton: false,
+    //   strictVersion: true,
+    //   requiredVersion: 'auto',
+    // },
+    // '@angular/core/primitives/signals': {
+    //   singleton: false,
+    //   strictVersion: true,
+    //   requiredVersion: 'auto',
+    // },
+    // '@angular/core/primitives/di': {
+    //   singleton: false,
+    //   strictVersion: true,
+    //   requiredVersion: 'auto',
+    // },
   },
 
   skip: [

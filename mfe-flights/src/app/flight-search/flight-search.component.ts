@@ -1,4 +1,4 @@
-import { Component, signal, ViewEncapsulation } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -10,8 +10,7 @@ import { FlightSearchCriteria } from '../models/flight.model';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './flight-search.component.html',
-  styleUrls: ['./flight-search.component.less'],
-  encapsulation: ViewEncapsulation.ShadowDom
+  styleUrls: ['./flight-search.component.less']
 })
 export class FlightSearchComponent {
   searchCriteria = signal<FlightSearchCriteria>({

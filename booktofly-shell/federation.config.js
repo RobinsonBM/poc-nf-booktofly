@@ -4,10 +4,6 @@ module.exports = withNativeFederation({
 
   name: 'booktofly-shell',
 
-  exposes: {
-    './Component': './src/app/app.component.ts',
-  },
-
   shared: {
     ...shareAll({ singleton: true, strictVersion: true, requiredVersion: 'auto' }),
   },

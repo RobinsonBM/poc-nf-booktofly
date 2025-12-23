@@ -1,4 +1,4 @@
-import { Component, computed, signal, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FlightService } from '../services/flight.service';
@@ -9,8 +9,7 @@ import { Flight } from '../models/flight.model';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './flight-detail.component.html',
-  styleUrls: ['./flight-detail.component.less'],
-  encapsulation: ViewEncapsulation.ShadowDom
+  styleUrls: ['./flight-detail.component.less']
 })
 export class FlightDetailComponent implements OnInit {
   flight = signal<Flight | undefined>(undefined);

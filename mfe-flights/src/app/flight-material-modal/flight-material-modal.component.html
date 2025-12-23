@@ -1,0 +1,84 @@
+<h2 mat-dialog-title class="modal-title">
+  <mat-icon class="title-icon">flight</mat-icon>
+  <span>Información del Vuelo</span>
+</h2>
+
+<mat-dialog-content class="modal-content">
+  <div class="flight-header-info">
+    <div class="airline-info">
+      <mat-icon color="primary">business</mat-icon>
+      <div>
+        <div class="info-label">Aerolínea</div>
+        <div class="info-value">{{ flight.airline }}</div>
+      </div>
+    </div>
+    <div class="flight-number-badge">
+      <mat-icon>confirmation_number</mat-icon>
+      <span>{{ flight.flightNumber }}</span>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="route-section">
+    <div class="route-point">
+      <mat-icon color="primary">flight_takeoff</mat-icon>
+      <div>
+        <div class="city-name">{{ flight.origin }}</div>
+        <div class="time">{{ flight.departureTime }}</div>
+      </div>
+    </div>
+
+    <div class="route-divider">
+      <div class="duration-badge">
+        <mat-icon>schedule</mat-icon>
+        {{ flight.duration }}
+      </div>
+      <div class="route-line"></div>
+    </div>
+
+    <div class="route-point">
+      <mat-icon color="primary">flight_land</mat-icon>
+      <div>
+        <div class="city-name">{{ flight.destination }}</div>
+        <div class="time">{{ flight.arrivalTime }}</div>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="flight-details">
+    <div class="detail-item">
+      <mat-icon>airline_seat_recline_normal</mat-icon>
+      <div>
+        <div class="detail-label">Clase</div>
+        <div class="detail-value">{{ flight.class }}</div>
+      </div>
+    </div>
+
+    <div class="detail-item">
+      <mat-icon>event_seat</mat-icon>
+      <div>
+        <div class="detail-label">Asientos disponibles</div>
+        <div class="detail-value">{{ flight.availableSeats }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="price-section">
+    <mat-icon>payments</mat-icon>
+    <div class="price-content">
+      <div class="price-label">Precio por persona</div>
+      <div class="price-amount">{{ flight.price }}€</div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onClose()">
+    <mat-icon>check_circle</mat-icon>
+    Reservar Ahora
+  </button>
+</mat-dialog-actions>

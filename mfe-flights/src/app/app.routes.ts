@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { FlightSearchComponent } from './flight-search/flight-search.component';
-import { FlightListComponent } from './flight-list/flight-list.component';
 import { FlightDetailComponent } from './flight-detail/flight-detail.component';
 
 export const routes: Routes = [
@@ -14,7 +13,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: FlightSearchComponent
+        loadComponent: () => import('./flight-search/flight-search.component').then(m => m.FlightSearchComponent)
       },
       {
         path: 'search',
@@ -22,7 +21,7 @@ export const routes: Routes = [
       },
       {
         path: 'list',
-        component: FlightListComponent
+        loadComponent: () => import('./flight-list/flight-list.component').then(m => m.FlightListComponent)
       },
       {
         path: 'detail/:id',
