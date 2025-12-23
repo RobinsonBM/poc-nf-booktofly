@@ -15,29 +15,31 @@ Implementación de una aplicación de reservas de viajes usando arquitectura de 
 ## 🏗️ Arquitectura
 
 ```
-┌─────────────────────────────────────────┐
-│    Shell (booktofly-shell:4200)         │
-│  ┌────────────────────────────────────┐ │
-│  │   NgRx Store (Singleton)           │ │
-│  │   - User State Management          │ │
-│  └────────────────────────────────────┘ │
-│  ┌────────────────────────────────────┐ │
-│  │   HomeComponent                    │ │
-│  │   - Establece usuario en Store     │ │
-│  │   - Navegación a MFEs              │ │
-│  └────────────────────────────────────┘ │
-└─────────────────────────────────────────┘
-                    │
-         ┌──────────┴──────────┐
-         ▼                     ▼
-┌──────────────────┐  ┌──────────────────┐
-│  MFE Hotels      │  │  Future MFEs     │
-│  (Port: 4201)    │  │  (Flights, etc.) │
-│                  │  │                  │
-│  Rutas:          │  └──────────────────┘
-│  - /hotels       │
-│  - /hotels/:id   │
-└──────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│         Shell (booktofly-shell:4200)                        │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │   NgRx Store (Singleton)                               │ │
+│  │   - User State Management                              │ │
+│  └────────────────────────────────────────────────────────┘ │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │   HomeComponent                                        │ │
+│  │   - Establece usuario en Store                         │ │
+│  │   - Navegación a MFEs                                  │ │
+│  └────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+                           │
+              ┌────────────┴────────────┐
+              ▼                         ▼
+    ┌──────────────────┐      ┌──────────────────────┐
+    │  MFE Hotels      │      │  MFE Flights         │
+    │  (Port: 4201)    │      │  (Port: 4202)        │
+    │                  │      │                      │
+    │  Lazy Routes:    │      │  Web Component:      │
+    │  - /hotels       │      │  - /flights/*        │
+    │  - /hotels/:id   │      │  - Shadow DOM        │
+    │                  │      │  - Aislado           │
+    │  singleton: true │      │  singleton: false    │
+    └──────────────────┘      └──────────────────────┘
 ```
 
 ---
@@ -57,25 +59,32 @@ Implementación de una aplicación de reservas de viajes usando arquitectura de 
 
 ### Instalación y Ejecución
 
-1. **Instalar dependencias en ambos proyectos:**
+1. **Instalar dependencias en todos los proyectos:**
 ```bash
 cd booktofly-shell && npm install
 cd ../mfe-hotels && npm install
+cd ../mfe-flights && npm install
 ```
 
-2. **Iniciar MFE (primero):**
+2. **Iniciar MFEs PRIMERO (en paralelo):**
 ```bash
-cd mfe-hotels
-npm start
+# Terminal 1:
+cd mfe-hotels && npm start
 # Corre en http://localhost:4201
+
+# Terminal 2:
+cd mfe-flights && npm start
+# Corre en http://localhost:4202
 ```
 
-3. **Iniciar Shell (después):**
+3. **Iniciar Shell DESPUÉS:**
 ```bash
-cd booktofly-shell
-npm start
+# Terminal 3:
+cd booktofly-shell && npm start
 # Corre en http://localhost:4200
 ```
+
+⚠️ **Importante**: Los MFEs deben estar corriendo antes del shell para que el manifest se genere correctamente.
 
 4. **Abrir en navegador:**
 ```
@@ -85,6 +94,8 @@ http://localhost:4200
 ---
 
 ## 🏨 MFE Hotels - Funcionalidades
+
+**Patrón**: Lazy Loading de Rutas (`singleton: true`)
 
 ### Catálogo de Hoteles
 - Grid responsivo con 6 hoteles colombianos
@@ -99,6 +110,26 @@ http://localhost:4200
 4. GHL Hotel Neiva - Neiva ($280.000)
 5. Dann Carlton Cali - Cali ($350.000)
 6. Hotel Charleston Santa Teresa - Cartagena ($890.000)
+
+---
+
+## ✈️ MFE Flights - Funcionalidades
+
+**Patrón**: Web Component con Angular Elements (`singleton: false`)
+
+### Sistema de Reserva de Vuelos
+- Búsqueda de vuelos (origen, destino, fecha, pasajeros)
+- Listado de resultados filtrados
+- Vista de detalle con selector de asientos
+- Cálculo dinámico de precios
+- Navegación interna completa (`/flights/*`)
+
+### Características Técnicas
+- **Shadow DOM**: Aislamiento completo de estilos
+- **Web Component**: `<mfe-flights-element>`
+- **Routing interno**: Maneja sus propias subrutas
+- **Zoneless**: `provideZonelessChangeDetection()`
+- **Signals**: Estado reactivo con Angular Signals
 
 ### Vista de Detalle
 - Imagen hero del hotel
@@ -194,10 +225,31 @@ poc-booktofly/
 │   ├── federation.config.js  # Config de Native Federation
 │   └── package.json
 │
-├── mfe-hotels/               # MFE Hoteles - Puerto 4201
+├── mfe-hotels/               # MFE Hoteles - Puerto 4201 (Lazy Routes)
 │   ├── src/app/
 │   │   ├── hotels/           # Lista de hoteles
 │   │   │   ├── hotels.component.ts
+│   │   │   ├── hotels.component.html
+│   │   │   └── hotels.component.less
+│   │   ├── hotel-detail/     # Detalle de hotel
+│   │   ├── app.routes.ts     # Rutas: '' y ':id'
+│   │   └── app.component.ts
+│   ├── federation.config.js  # Expone './routes' con singleton: true
+│   └── package.json
+│
+├── mfe-flights/              # MFE Vuelos - Puerto 4202 (Web Component)
+│   ├── src/
+│   │   ├── bootstrap.ts      # ⚠️ Bootstrap del Web Component
+│   │   └── app/
+│   │       ├── app.ts        # Componente raíz con Shadow DOM
+│   │       ├── flight-search/
+│   │       ├── flight-list/
+│   │       ├── flight-detail/
+│   │       ├── models/
+│   │       ├── services/
+│   │       └── app.routes.ts # Routing interno: /flights/*
+│   ├── federation.config.js  # Expone './web-component' con singleton: false
+│   └── package.json
 │   │   │   ├── hotels.component.html
 │   │   │   └── hotels.component.less
 │   │   ├── hotel-detail/     # Detalle de hotel

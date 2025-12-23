@@ -5,10 +5,11 @@ Shell application (host) para la arquitectura de microfrontends de BookToFly. Ge
 ## 🎯 Propósito
 
 El Shell actúa como aplicación host que:
-- Gestiona el estado global de la aplicación (usuario)
-- Carga microfrontends remotos dinámicamente
+- Gestiona el estado global de la aplicación (NgRx Store)
+- Carga microfrontends remotos dinámicamente (Hotels y Flights)
 - Proporciona navegación unificada
 - Comparte el estado mediante NgRx Store singleton
+- Maneja dos patrones de integración: **Lazy Routes** y **Web Components**
 
 ## 🚀 Desarrollo
 
@@ -30,35 +31,56 @@ booktofly-shell/
 │   ├── home/                     # Componente home
 │   │   ├── home.component.ts     # Establece usuario en Store
 │   │   └── home.component.html   # Formulario y navegación a MFEs
+│   ├── flights-wrapper/          # ⭐ Wrapper para Web Component
+│   │   └── flights-wrapper.component.ts  # Carga mfe-flights-element
 │   ├── store/                    # NgRx Store
 │   │   ├── user.actions.ts       # Actions: setUser, clearUser
 │   │   ├── user.reducer.ts       # Reducer del estado user
 │   │   └── user.selectors.ts     # Selectors: selectUser
-│   ├── app.routes.ts             # Rutas: home + loadChildren para MFEs
+│   ├── utils/                    # Utilidades
+│   │   └── route-matchers.ts     # Custom matchers para Web Components
+│   ├── app.routes.ts             # Rutas: home + loadChildren + matcher
 │   ├── app.config.ts             # Providers con provideStore
 │   └── app.component.ts          # Root component
+├── public/
+│   └── federation.manifest.json  # Manifest de MFEs remotos
 ├── federation.config.js          # Config de Native Federation
 └── package.json
 ```
 
 ## 🛣️ Configuración de Rutas
 
+### Patrón 1: Lazy Loading de Rutas (Hotels)
+
 ```typescript
-export const routes: Routes = [
-  {
-    path: '',
-    component: HomeComponent,
-    pathMatch: 'full'
-  },
-  {
-    path: 'hotels',
-    loadChildren: () =>
-      loadRemoteModule({
-        remoteName: 'mfe-hotels',
-        exposedModule: './routes'
-      }).then(m => m.routes)
-  }
-];
+{
+  path: 'hotels',
+  loadChildren: () =>
+    loadRemoteModule({
+      remoteName: 'mfe-hotels',
+      exposedModule: './routes'
+    }).then(m => m.routes)
+}
+```
+
+### Patrón 2: Web Component (Flights)
+
+```typescript
+{
+  matcher: startsWith('flights'),  // Custom matcher
+  component: FlightsWrapperComponent
+}
+```
+
+**Custom Matcher** (utils/route-matchers.ts):
+```typescript
+export function startsWith(path: string): UrlMatcher {
+  return (segments: UrlSegment[]) => {
+    return segments.length > 0 && segments[0].path === path
+      ? { consumed: segments }  // Consume TODOS los segmentos
+      : null;
+  };
+}
 ```
 
 ## 🔧 NgRx Store - Estado Global
@@ -107,9 +129,11 @@ shared: {
 
 ### Remotes
 
-```javascript
-remotes: {
-  'mfe-hotels': 'http://localhost:4201/remoteEntry.json'
+```json
+// public/federation.manifest.json
+{
+  "mfe-hotels": "http://localhost:4201/remoteEntry.json",
+  "mfe-flights": "http://localhost:4202/remoteEntry.json"
 }
 ```
 
@@ -118,8 +142,36 @@ remotes: {
 Componente principal del shell que:
 - Permite establecer el nombre de usuario
 - Muestra el usuario actual desde el Store
-- Proporciona navegación a los MFEs (Hotels, etc.)
+- Proporciona navegación a los MFEs (Hotels, Flights)
 - Persiste el usuario en el estado global
+
+---
+
+## ✈️ FlightsWrapperComponent
+
+**Wrapper para cargar el Web Component de Flights:**
+
+```typescript
+@Component({
+  selector: 'app-flights-wrapper',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],  // ⚠️ Requerido
+  template: `<mfe-flights-element></mfe-flights-element>`
+})
+export class FlightsWrapperComponent implements OnInit {
+  async ngOnInit() {
+    await loadRemoteModule({
+      remoteName: 'mfe-flights',
+      exposedModule: './web-component'
+    });
+  }
+}
+```
+
+**Aspectos clave:**
+- Requiere `CUSTOM_ELEMENTS_SCHEMA` para tags personalizados
+- Carga asíncrona del Web Component en `ngOnInit`
+- El tag `<mfe-flights-element>` debe coincidir con el nombre en `customElements.define()`
 
 ## 📦 Construcción
 

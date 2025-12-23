@@ -106,12 +106,17 @@ Este MFE forma parte de una arquitectura de microfrontends usando:
 - **Native Federation 19.0.23**
 - **NgRx Store 19.2.1** (shared singleton con el shell)
 - **Standalone Components**
+- **Patrón**: Lazy Loading de Rutas (no Web Component)
 
-ng e2e
-```
+### Diferencias con MFE Flights
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+| Aspecto | MFE Hotels | MFE Flights |
+|---------|------------|-------------|
+| **Patrón** | Lazy Routes | Web Component |
+| **Exposición** | `./routes` | `./web-component` |
+| **Singleton** | `true` | `false` |
+| **Encapsulation** | `Emulated` | `ShadowDom` |
+| **Integración** | `loadChildren` | Custom Matcher |
+| **Store** | Acceso directo | Aislado |
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Ver [README principal](../README.md) para arquitectura completa.
